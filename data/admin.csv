@@ -1,0 +1,2 @@
+username,password,role,phone,email
+purva@123,scrypt:32768:8:1$hcvoSkt70g2yN0g9$79c57875a415c10565a047b3413922bd7e771bb5e367406aa65a90c5684124507b12b4f79026f6401cdd5f4c911e387a27d1af4058ef2799a606521e30bda43a,admin,1235659891,purvapanasara@gmail.com

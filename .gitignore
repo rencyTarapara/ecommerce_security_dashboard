@@ -1,0 +1,58 @@
+# --------------------------
+# Python
+# --------------------------
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+.envrc
+*.log
+*.sqlite3
+
+# --------------------------
+# Virtual Environments
+# --------------------------
+env/
+venv/
+ENV/
+env.bak/
+env_old/
+
+# --------------------------
+# Streamlit Secrets & Cache
+# --------------------------
+.streamlit/secrets.toml
+.streamlit/config.toml
+.streamlit/cache/
+
+# --------------------------
+# Model and Data Files
+# --------------------------
+*.pkl
+*.joblib
+*.h5
+*.sav
+
+# --------------------------
+# CSV or Live Logs
+# --------------------------
+*.csv
+data/*.csv
+!data/users.csv
+!data/purchase_history.csv
+
+# --------------------------
+# Jupyter and VS Code
+# --------------------------
+.ipynb_checkpoints/
+.vscode/
+*.ipynb
+
+# --------------------------
+# System Files
+# --------------------------
+.DS_Store
+Thumbs.db

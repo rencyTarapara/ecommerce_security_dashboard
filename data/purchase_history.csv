@@ -1,0 +1,10 @@
+name,price,quantity,total,username,timestamp,payment_method
+Phone Case,299,1,299,Renshi@111,2025-07-08 08:55:28,Credit Card
+Smartwatch,2499,1,2499,Renshi@111,2025-07-08 08:58:16,UPI
+Power Bank,699,1,699,Renshi@111,2025-07-09 10:32:03,Credit Card
+Smartwatch,2499,1,2499,Aditi,2025-07-12 08:50:31,Credit Card
+Bluetooth Speaker,999,1,999,Aditi,2025-07-12 08:50:31,Credit Card
+Phone Case,299,1,299,Renshi@111,2025-07-14 18:19:46,Credit Card
+Smartwatch,2499,1,2499,Renshi@111,2025-07-14 18:20:20,Cash on Delivery
+Wireless Headphones,1200,1,1200,jignal@368,2025-07-14 18:27:13,Debit Card
+Bluetooth Speaker,999,1,999,jignal@368,2025-07-14 18:27:43,Debit Card
