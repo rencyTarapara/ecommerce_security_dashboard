@@ -5,29 +5,38 @@ st.set_page_config(
     layout="wide",
 )
 
-# 🛡️ Initialize session
+# 🛡️ Initialize session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.username = ""
     st.session_state.role = ""
+    st.session_state.phone = ""
+    st.session_state.email = ""
 
-# 🔘 LOGOUT UI in Sidebar
+# 🔘 Sidebar: show logged-in user info and logout button
 if st.session_state.logged_in:
     with st.sidebar:
-        st.markdown(f"👤 Logged in as: **{st.session_state.username}** ({st.session_state.role})")
+        st.markdown(
+            f"👤 Logged in as: **{st.session_state.username}** ({st.session_state.role})"
+        )
         if st.button("🚪 Logout"):
             st.session_state.logged_in = False
             st.session_state.username = ""
             st.session_state.role = ""
-            st.success("🔓 You have been logged out. Redirecting to Login...")
-            st.experimental_rerun()
+            st.session_state.phone = ""
+            st.session_state.email = ""
+            st.success("🔓 You have been logged out.")
+            st.rerun()
 
-    # ✅ Auto-redirect based on role
+    # ✅ Auto-redirect based on role after login
     if st.session_state.role == "admin":
-        st.switch_page("pages/4_AdminDashboard.py")
+        st.switch_page("pages/Admin_Dashboard.py")
     elif st.session_state.role == "user":
-        st.switch_page("pages/3_UserDashboard.py")
+        st.switch_page("pages/User_Dashboard.py")
 
-# 🛒 Dashboard Title (Shown only if not logged in)
+# 🛒 Landing page (shown when not logged in)
 st.title("🛒 E-Commerce Security Dashboard")
-st.write("Welcome! Use the sidebar to access login, user panel, or admin panel.")
+st.write(
+    "Welcome! Use the sidebar to navigate to **Login** or **Register**. "
+    "After logging in you will be automatically redirected to your dashboard."
+)

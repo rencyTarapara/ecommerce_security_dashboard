@@ -1,61 +1,119 @@
-import pandas as pd
+
 import os
+from pathlib import Path
+
+import pandas as pd
 from werkzeug.security import generate_password_hash, check_password_hash
 
-USER_DB = "data/users.csv"
-ADMIN_DB = "data/admin.csv"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+USER_DB = DATA_DIR / "users.csv"
+ADMIN_DB = DATA_DIR / "admin.csv"
 
-# Utility: get the right database file based on role
+COLUMNS = ["username", "password", "role", "phone", "email"]
+
+
 def get_db_path(role):
-    return USER_DB if role == "user" else ADMIN_DB
+    if role == "user":
+        return USER_DB
+    if role == "admin":
+        return ADMIN_DB
+    raise ValueError("Invalid role.")
 
-# Load users/admins based on role
+
 def load_users(role="user"):
     db_path = get_db_path(role)
+
     try:
-        return pd.read_csv(db_path)
+        df = pd.read_csv(db_path)
     except FileNotFoundError:
-        return pd.DataFrame(columns=["username", "password", "role", "phone", "email"])
+        return pd.DataFrame(columns=COLUMNS)
+    except pd.errors.EmptyDataError:
+        return pd.DataFrame(columns=COLUMNS)
 
-# Save user/admin in appropriate file
-def save_user(username, password, role="user", phone="", email=""):
+    for column in COLUMNS:
+        if column not in df.columns:
+            df[column] = ""
+
+    return df[COLUMNS]
+
+
+def _save_account(username, password, role, phone="", email=""):
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
     df = load_users(role)
-    if username in df['username'].values:
-        return False  # Username already exists
 
-    hashed_password = generate_password_hash(password)
-    new_user = pd.DataFrame([[username, hashed_password, role, phone, email]],
-                            columns=["username", "password", "role", "phone", "email"])
-    df = pd.concat([df, new_user], ignore_index=True)
+    if df["username"].astype(str).str.casefold().eq(
+        username.strip().casefold()
+    ).any():
+        return False
 
+    new_row = pd.DataFrame([{
+        "username": username.strip(),
+        "password": generate_password_hash(password),
+        "role": role,
+        "phone": phone.strip(),
+        "email": email.strip(),
+    }])
+
+    df = pd.concat([df, new_row], ignore_index=True)
     db_path = get_db_path(role)
-    os.makedirs(os.path.dirname(db_path), exist_ok=True)
     df.to_csv(db_path, index=False)
     return True
 
-# Verify login by checking both user and admin databases
+
+def save_user(username, password, role="user", phone="", email=""):
+    # Public registration is restricted to ordinary user accounts.
+    if role != "user":
+        raise ValueError("Public registration can only create user accounts.")
+
+    if not username.strip() or not password:
+        raise ValueError("Username and password are required.")
+
+    return _save_account(username, password, "user", phone, email)
+
+
+def save_admin(username, password, phone="", email=""):
+    # Call only from a trusted, private admin-provisioning process.
+    if not username.strip() or not password:
+        raise ValueError("Username and password are required.")
+
+    return _save_account(username, password, "admin", phone, email)
+
+
 def verify_login(username, password):
-    for role in ["user", "admin"]:
+    for role in ("user", "admin"):
         df = load_users(role)
-        user = df[df['username'] == username]
-        if not user.empty:
-            hashed_password = user.iloc[0]['password']
-            if check_password_hash(hashed_password, password):
+        match = df[
+            df["username"].astype(str).str.casefold()
+            == username.strip().casefold()
+        ]
+
+        if not match.empty:
+            stored_hash = str(match.iloc[0]["password"])
+
+            if check_password_hash(stored_hash, password):
                 return {
-                    "role": user.iloc[0]["role"],
-                    "phone": user.iloc[0].get("phone", ""),
-                    "email": user.iloc[0].get("email", "")
+                    "role": role,
+                    "phone": str(match.iloc[0].get("phone", "") or ""),
+                    "email": str(match.iloc[0].get("email", "") or ""),
                 }
+
     return None
 
-# Get contact info from both databases
+
 def get_user_contact(username):
-    for role in ["user", "admin"]:
+    for role in ("user", "admin"):
         df = load_users(role)
-        user = df[df['username'] == username]
-        if not user.empty:
+        match = df[
+            df["username"].astype(str).str.casefold()
+            == username.strip().casefold()
+        ]
+
+        if not match.empty:
             return {
-                "phone": user.iloc[0].get("phone", ""),
-                "email": user.iloc[0].get("email", "")
+                "phone": str(match.iloc[0].get("phone", "") or ""),
+                "email": str(match.iloc[0].get("email", "") or ""),
             }
+
     return {"phone": "", "email": ""}

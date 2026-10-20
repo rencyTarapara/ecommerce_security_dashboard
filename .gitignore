@@ -22,14 +22,16 @@ env.bak/
 env_old/
 
 # --------------------------
-# Streamlit Secrets & Cache
+# Streamlit Secrets (NEVER commit real credentials)
 # --------------------------
 .streamlit/secrets.toml
-.streamlit/config.toml
-.streamlit/cache/
+secrets.toml
+
+# config.toml is intentionally committed so Streamlit Cloud picks up settings.
+# DO NOT add .streamlit/config.toml here.
 
 # --------------------------
-# Model and Data Files
+# Model and Data Files (large binaries — use Git LFS or cloud storage)
 # --------------------------
 *.pkl
 *.joblib
@@ -37,12 +39,12 @@ env_old/
 *.sav
 
 # --------------------------
-# CSV or Live Logs
+# CSV dynamic data (live logs, predictions)
 # --------------------------
-*.csv
-data/*.csv
-!data/users.csv
-!data/purchase_history.csv
+data/live_predictions.csv
+
+# Committed CSVs (seed data for the app)
+# data/users.csv and data/admin.csv are intentionally tracked
 
 # --------------------------
 # Jupyter and VS Code
