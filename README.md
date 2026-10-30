@@ -65,14 +65,7 @@ Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and fill in:
 sender = "your-email@gmail.com"
 app_password = "your-gmail-app-password"
 ```
-
 > **Never** commit `secrets.toml` — it is listed in `.gitignore`.
-
-### Generating a Gmail App Password
-1. Enable **2-Factor Authentication** on your Google account.
-2. Go to [Google Account → Security → App Passwords](https://myaccount.google.com/apppasswords).
-3. Generate a password for *Mail / Other*.
-4. Paste it into `secrets.toml`.
 
 ## Deploying to Streamlit Community Cloud
 
