@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+import pandas as pd
 import streamlit as st
 from utils.auth import save_user
 

@@ -76,8 +76,8 @@ def test_verify_login_unknown_user():
 
 
 def test_save_admin_user():
-    from utils.auth import save_user, load_users
-    result = save_user("adminuser", "adminpass", role="admin", phone="0000000000", email="admin@example.com")
+    from utils.auth import save_admin, load_users
+    result = save_admin("adminuser", "adminpass", phone="0000000000", email="admin@example.com")
     assert result is True
     df = load_users("admin")
     assert "adminuser" in df["username"].values
@@ -87,11 +87,27 @@ def test_save_admin_user():
 
 
 def test_verify_admin_login():
-    from utils.auth import save_user, verify_login
-    save_user("adminlogin", "adminpass123", role="admin")
+    from utils.auth import save_admin, verify_login
+    save_admin("adminlogin", "adminpass123")
     result = verify_login("adminlogin", "adminpass123")
     assert result is not None
     assert result["role"] == "admin"
+
+
+def test_public_registration_cannot_create_admin():
+    from utils.auth import save_user, load_users
+    import pytest
+    with pytest.raises(ValueError):
+        save_user("sneaky", "pass", role="admin")
+    assert load_users("admin").empty
+
+
+def test_passwords_are_stored_hashed():
+    from utils.auth import save_user, load_users
+    save_user("hashcheck", "plaintext-pass")
+    stored = load_users("user").iloc[0]["password"]
+    assert stored != "plaintext-pass"
+    assert stored.startswith(("scrypt:", "pbkdf2:"))
 
 
 def test_get_user_contact():

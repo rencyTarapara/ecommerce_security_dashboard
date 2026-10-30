@@ -33,7 +33,6 @@ secrets.toml
 # --------------------------
 # Model and Data Files (large binaries — use Git LFS or cloud storage)
 # --------------------------
-*.pkl
 *.joblib
 *.h5
 *.sav
